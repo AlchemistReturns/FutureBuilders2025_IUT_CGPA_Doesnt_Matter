@@ -1,120 +1,105 @@
-import React, { useState } from 'react';
-import { Bell, Calendar, Languages, Megaphone, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-// --- 1. BRUTE FORCE DATA (Hardcoded Notices) ---
-const NOTICE_DATA = [
+type NoticeType = 'Alert' | 'Update' | 'Info';
+
+interface Notice {
+    id: number;
+    type: NoticeType;
+    date: { en: string; bn: string };
+    title: { en: string; bn: string };
+    content: { en: string; bn: string };
+}
+
+const notices: Notice[] = [
     {
         id: 1,
-        date: "2025-12-28",
-        category: "Vaccination",
-        title: { en: "Polio Vaccination Campaign Starts Next Week", bn: "আগামী সপ্তাহে পোলিও টিকাদান কর্মসূচি শুরু" },
+        type: "Alert",
+        date: { en: "Dec 28, 2024", bn: "২৮ ডিসেম্বর, ২০২৪" },
+        title: { en: "Flu Season Warning", bn: "ফ্লু মৌসুমের সতর্কতা" },
         content: {
-            en: "The national polio vaccination drive will run from Jan 1st to Jan 7th. All children under 5 must be vaccinated at local clinics.",
-            bn: "জাতীয় পোলিও টিকাদান কর্মসূচি ১লা জানুয়ারি থেকে ৭ই জানুয়ারি পর্যন্ত চলবে। ৫ বছরের কম বয়সী সকল শিশুকে স্থানীয় ক্লিনিকে টিকা দিতে হবে।"
+            en: "Influenza cases are rising. Please get vaccinated if you haven't already.",
+            bn: "ইনফ্লুয়েঞ্জা কেস বাড়ছে। আপনি যদি এখনও টিকা না নিয়ে থাকেন তবে অনুগ্রহ করে নিন।"
         }
     },
     {
         id: 2,
-        date: "2025-12-25",
-        category: "Alert",
-        title: { en: "Winter Cold Wave Warning", bn: "শীতকালীন শৈত্যপ্রবাহের সতর্কতা" },
+        type: "Update",
+        date: { en: "Dec 25, 2024", bn: "২৫ ডিসেম্বর, ২০২৪" },
+        title: { en: "New AI Features", bn: "নতুন এআই বৈশিষ্ট্য" },
         content: {
-            en: "Severe cold wave expected in northern districts. Please keep children and elderly warm. Drink warm water.",
-            bn: "উত্তরাঞ্চলে তীব্র শৈত্যপ্রবাহের সম্ভাবনা। শিশু ও বৃদ্ধদের গরম রাখুন। কুসুম গরম পানি পান করুন।"
+            en: "We have upgraded our AI Doctor to Gemini 1.5 Flash for faster responses.",
+            bn: "আমরা আমাদের এআই ডাক্তারকে জেমিনি ১.৫ ফ্ল্যাশে আপগ্রেড করেছি দ্রুত প্রতিক্রিয়ার জন্য।"
         }
     },
     {
         id: 3,
-        date: "2025-12-20",
-        category: "Discovery",
-        title: { en: "New Dengue Prevention Method", bn: "ডেঙ্গু প্রতিরোধের নতুন পদ্ধতি" },
+        type: "Info",
+        date: { en: "Dec 30, 2024", bn: "৩০ ডিসেম্বর, ২০২৪" },
+        title: { en: "Maintenance Scheduled", bn: "রক্ষণাবেক্ষণ নির্ধারিত" },
         content: {
-            en: "Researchers suggest using mosquito nets even during the day. Clean stagnant water around your home every Friday.",
-            bn: "গবেষকরা দিনের বেলাতেও মশারি ব্যবহারের পরামর্শ দিচ্ছেন। প্রতি শুক্রবার আপনার বাড়ির চারপাশের জমে থাকা পানি পরিষ্কার করুন।"
+            en: "Server maintenance scheduled for 2 AM - 4 AM UTC.",
+            bn: "সার্ভার রক্ষণাবেক্ষণ ভোর ২টা - ৪টা ইউটিসি পর্যন্ত নির্ধারিত।"
         }
     },
-    {
-        id: 4,
-        date: "2025-12-15",
-        category: "General",
-        title: { en: "Free Eye Camp on Sunday", bn: "রবিবার বিনামূল্যে চক্ষু শিবির" },
-        content: {
-            en: "A team of doctors from Dhaka will provide free eye checkups at the Upazila Health Complex from 9 AM to 4 PM.",
-            bn: "ঢাকা থেকে আগত ডাক্তারদের একটি দল সকাল ৯টা থেকে বিকাল ৪টা পর্যন্ত উপজেলা স্বাস্থ্য কমপ্লেক্সে বিনামূল্যে চক্ষু পরীক্ষা করবেন।"
-        }
-    }
 ];
 
-const NoticeBoard: React.FC = () => {
-    const navigate = useNavigate();
-    // State for Language (Default to Bangla 'bn')
-    const [lang, setLang] = useState<'en' | 'bn'>('bn');
+export default function NoticeBoard() {
+    const [language, setLanguage] = useState<'en' | 'bn'>('en');
 
     return (
-        <div className="max-w-4xl mx-auto p-4 font-sans">
-
-            {/* Header Section */}
-            <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => navigate('/dashboard')} className="p-2 hover:bg-gray-100 rounded-full">
-                        <ArrowLeft size={20} className="text-gray-600" />
-                    </button>
-                    <h2 className="text-xl font-bold text-gray-800 flex items-center">
-                        <Megaphone className="text-orange-500 mr-2" size={24} />
-                        {lang === 'en' ? "Health Notices" : "স্বাস্থ্য বিজ্ঞপ্তি"}
-                    </h2>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">
+                        {language === 'en' ? "Health Notices" : "স্বাস্থ্য বিজ্ঞপ্তি"}
+                    </h1>
+                    <p className="text-gray-500">
+                        {language === 'en' ? "Stay updated with the latest alerts and news." : "সর্বশেষ সতর্কতা এবং খবরের সাথে আপডেট থাকুন।"}
+                    </p>
                 </div>
 
-                {/* Language Toggle */}
-                <button
-                    onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-                    className="flex items-center px-4 py-2 bg-orange-50 text-orange-700 rounded-full text-xs font-bold border border-orange-200 hover:bg-orange-100 transition"
-                >
-                    <Languages size={16} className="mr-2" />
-                    {lang === 'en' ? "বাংলা" : "ENGLISH"}
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setLanguage(prev => prev === 'en' ? 'bn' : 'en')}
+                        className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition text-sm flex items-center gap-2"
+                    >
+                        <span>🌐</span>
+                        {language === 'en' ? "বাংলায় দেখুন" : "Switch to English"}
+                    </button>
+                    <Link to="/dashboard" className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg transition text-sm font-medium">
+                        {language === 'en' ? "Back to Dashboard" : "ড্যাশবোর্ডে ফিরে যান"}
+                    </Link>
+                </div>
             </div>
 
-            {/* Notice List */}
             <div className="space-y-4">
-                {NOTICE_DATA.map((notice) => (
-                    <div key={notice.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-
-                        {/* Top Row: Date & Category */}
-                        <div className="flex justify-between items-start mb-3">
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold 
-                ${notice.category === 'Vaccination' ? 'bg-blue-100 text-blue-700' :
-                                    notice.category === 'Alert' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`}>
-                                {notice.category}
-                            </span>
-                            <div className="flex items-center text-gray-400 text-xs">
-                                <Calendar size={14} className="mr-1" />
-                                {notice.date}
-                            </div>
+                {notices.map((notice) => (
+                    <div key={notice.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex gap-4 hover:shadow-md transition">
+                        <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold
+                            ${notice.type === 'Alert' ? 'bg-red-100 text-red-600' :
+                                notice.type === 'Update' ? 'bg-blue-100 text-blue-600' :
+                                    'bg-gray-100 text-gray-600'
+                            }
+                        `}>
+                            {notice.type === 'Alert' ? '!' : notice.type === 'Update' ? '★' : 'i'}
                         </div>
-
-                        {/* Content */}
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
-                            {lang === 'en' ? notice.title.en : notice.title.bn}
-                        </h3>
-                        <p className="text-gray-600 leading-relaxed">
-                            {lang === 'en' ? notice.content.en : notice.content.bn}
-                        </p>
-
-                        {/* "New" Badge for recent items (Brute force logic: if id is 1) */}
-                        {notice.id === 1 && (
-                            <div className="mt-4 flex items-center text-orange-600 text-xs font-bold animate-pulse">
-                                <Bell size={14} className="mr-1" />
-                                {lang === 'en' ? "Latest Update" : "সর্বশেষ আপডেট"}
+                        <div>
+                            <div className="flex items-center gap-3 mb-1">
+                                <h3 className="text-lg font-bold text-gray-900">
+                                    {language === 'en' ? notice.title.en : notice.title.bn}
+                                </h3>
+                                <span className="text-xs text-gray-400">
+                                    {language === 'en' ? notice.date.en : notice.date.bn}
+                                </span>
                             </div>
-                        )}
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                                {language === 'en' ? notice.content.en : notice.content.bn}
+                            </p>
+                        </div>
                     </div>
                 ))}
             </div>
-
         </div>
     );
-};
-
-export default NoticeBoard;
+}
