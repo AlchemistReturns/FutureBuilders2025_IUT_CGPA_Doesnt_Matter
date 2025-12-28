@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -9,10 +8,31 @@ const Login: React.FC = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
+    const { login } = useAuth();
+
+    // ...
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const response = await fetch("http://localhost:5000/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to login");
+            }
+
+            const data = await response.json();
+
+            // Log in the user locally
+            login(data.token, { uid: data.userId, email: data.email });
+
             navigate("/dashboard");
         } catch (err: any) {
             setError(err.message);

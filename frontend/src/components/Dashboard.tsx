@@ -1,14 +1,14 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { auth } from "../config/firebase";
+
 import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await auth.signOut();
+        logout();
         navigate("/login");
     };
 

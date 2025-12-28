@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../config/firebase";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Register: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -22,21 +20,30 @@ const Register: React.FC = () => {
         });
     };
 
+    const { login } = useAuth();
+
+    // ...
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // Create user in Firebase Auth
-            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-            const user = userCredential.user;
-
-            // Store user details in Firestore
-            await setDoc(doc(db, "users", user.uid), {
-                name: formData.name,
-                age: formData.age,
-                gender: formData.gender,
-                email: formData.email,
-                password: formData.password // Storing password as requested
+            const response = await fetch("http://localhost:5000/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to register");
+            }
+
+            const data = await response.json();
+
+            // Log in the user locally
+            login(data.token, { uid: data.userId, email: data.email });
 
             navigate("/dashboard");
         } catch (err: any) {

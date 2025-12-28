@@ -1,10 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "../config/firebase";
-import { onAuthStateChanged, type User } from "firebase/auth";
+
+// Simplified User interface or we can keep some compatibility if convenient
+interface User {
+    uid: string;
+    email: string | null;
+}
 
 interface AuthContextType {
     currentUser: User | null;
     loading: boolean;
+    login: (token: string, user: User) => void;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,21 +28,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
-            setLoading(false);
-        });
+        // Initialize from local storage
+        const storedToken = localStorage.getItem("token");
+        const storedUser = localStorage.getItem("user");
 
-        return unsubscribe;
+        if (storedToken && storedUser) {
+            try {
+                // Here we could validate the token with backend if we wanted strictly checked sessions
+                // For now, we trust the local storage for initial load
+                setCurrentUser(JSON.parse(storedUser));
+            } catch (e) {
+                console.error("Failed to parse stored user", e);
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+            }
+        }
+        setLoading(false);
     }, []);
 
-    if (loading) {
-        return <div className="flex h-screen items-center justify-center">Loading...</div>;
-    }
+    const login = (token: string, user: User) => {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        setCurrentUser(user);
+    };
+
+    const logout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setCurrentUser(null);
+    };
 
     const value = {
         currentUser,
-        loading
+        loading,
+        login,
+        logout
     };
 
     return (
