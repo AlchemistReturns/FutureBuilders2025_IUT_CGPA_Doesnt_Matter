@@ -6,7 +6,9 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AiDoctor from "./components/AiDoctor";
-
+// 🟢 Import the component
+import DiseaseWiki from "./components/DiseaseWiki";
+import NoticeBoard from "./components/NoticeBoard";
 function App() {
   return (
     <Router>
@@ -31,6 +33,25 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* 🟢 NEW ROUTE: Disease Wiki */}
+          <Route
+            path="/diseases"
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-gray-50 py-8 px-4">
+                  <DiseaseWiki />
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          {/* 🟢 NEW ROUTE: Notices */}
+          <Route path="/notices" element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gray-50 py-8 px-4">
+                <NoticeBoard />
+              </div>
+            </ProtectedRoute>
+          } />
         </Routes>
       </AuthProvider>
     </Router>

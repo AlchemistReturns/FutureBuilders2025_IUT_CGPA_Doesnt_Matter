@@ -24,7 +24,20 @@ const Dashboard: React.FC = () => {
                     >
                         Go to Doctor
                     </button>
-
+                    {/* 🟢 Button 2: Disease Wiki (NEW) */}
+                    <button
+                        onClick={() => navigate('/diseases')}
+                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                    >
+                        Medical Encyclopedia
+                    </button>
+                    {/* 🟢 Button 3: Notices (NEW) */}
+                    <button
+                        onClick={() => navigate('/notices')}
+                        className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
+                    >
+                        Health Notices
+                    </button>
                     <button
                         onClick={handleLogout}
                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
