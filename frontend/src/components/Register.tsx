@@ -1,31 +1,37 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const Register: React.FC = () => {
+export default function Register() {
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
     const [formData, setFormData] = useState({
         name: "",
         age: "",
-        gender: "",
+        gender: "Male",
         email: "",
-        password: ""
+        password: "",
+        confirmPassword: ""
     });
+
     const [error, setError] = useState("");
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const { login } = useAuth();
-
-    // ...
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
+
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+
+        setLoading(true);
         try {
             const response = await fetch("http://localhost:5000/api/register", {
                 method: "POST",
@@ -41,91 +47,115 @@ const Register: React.FC = () => {
             }
 
             const data = await response.json();
-
-            // Log in the user locally
             login(data.token, { uid: data.userId, email: data.email });
-
             navigate("/dashboard");
+
         } catch (err: any) {
             setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white p-8 rounded shadow-md w-96">
-                <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block mb-1">Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+            <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-fade-in">
+
+                {/* Left Side: Visual */}
+                <div className="hidden md:flex w-1/2 bg-gradient-to-br from-emerald-600 to-teal-800 p-12 flex-col justify-between text-white relative overflow-hidden order-last md:order-first">
+                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-emerald-500 opacity-20 blur-3xl"></div>
+                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-teal-500 opacity-20 blur-3xl"></div>
+
+                    <div className="relative z-10">
+                        <div className="text-5xl mb-4">🚀</div>
+                        <h2 className="text-3xl font-bold mb-4">Start Your Health Journey</h2>
+                        <p className="text-emerald-100 text-lg leading-relaxed">
+                            Join thousands of users who trust our AI to provide accurate, timely health insights.
+                        </p>
                     </div>
-                    <div>
-                        <label className="block mb-1">Age</label>
-                        <input
-                            type="number"
-                            name="age"
-                            value={formData.age}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
+
+                    <div className="relative z-10 space-y-4">
+                        <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/10">
+                            <span className="text-xl">🔒</span>
+                            <span className="text-sm font-medium">Secure & Private Data</span>
+                        </div>
+                        <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/10">
+                            <span className="text-xl">⚡</span>
+                            <span className="text-sm font-medium">24/7 AI Availability</span>
+                        </div>
                     </div>
-                    <div>
-                        <label className="block mb-1">Gender</label>
-                        <select
-                            name="gender"
-                            value={formData.gender}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded"
-                            required
+                </div>
+
+                {/* Right Side: Form */}
+                <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col justify-center">
+                    <div className="mb-6 text-center md:text-left">
+                        <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>
+                        <p className="text-gray-500 text-sm">
+                            Fill in your details to get started.
+                        </p>
+                    </div>
+
+                    {error && (
+                        <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-4 text-sm font-medium flex items-center gap-2">
+                            ⚠️ {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleRegister} className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Full Name</label>
+                                <input name="name" type="text" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-gray-50" placeholder="John Doe" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Age</label>
+                                <input name="age" type="number" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-gray-50" placeholder="25" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Gender</label>
+                            <select name="gender" onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-gray-50">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Email</label>
+                            <input name="email" type="email" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-gray-50" placeholder="john@example.com" />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Password</label>
+                                <input name="password" type="password" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-gray-50" placeholder="••••••" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Confirm</label>
+                                <input name="confirmPassword" type="password" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-gray-50" placeholder="••••••" />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full mt-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-xl hover:opacity-90 transition-opacity shadow-lg disabled:opacity-70"
                         >
-                            <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                        </select>
+                            {loading ? "Creating Account..." : "Register"}
+                        </button>
+                    </form>
+
+                    <div className="mt-6 text-center text-sm text-gray-500">
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-emerald-600 font-semibold hover:underline">
+                            Log in
+                        </Link>
                     </div>
-                    <div>
-                        <label className="block mb-1">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block mb-1">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600 transition">
-                        Register
-                    </button>
-                </form>
-                <p className="mt-4 text-center">
-                    Already have an account? <Link to="/login" className="text-blue-500">Login</Link>
-                </p>
+                </div>
+
             </div>
         </div>
     );
-};
-
-export default Register;
+}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 type Role = "user" | "assistant";
 
@@ -69,34 +70,62 @@ export default function SymptomTracker() {
     };
 
     return (
-        <div className="max-w-md mx-auto h-[calc(100vh-100px)] bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden">
+        <div className="flex flex-col h-[calc(100vh-100px)] max-w-2xl mx-auto rounded-3xl overflow-hidden bg-white shadow-2xl border border-gray-100 font-sans">
 
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white font-bold">
-                🩺 AI Symptom Tracker
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-white flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-2xl backdrop-blur-sm">
+                        📉
+                    </div>
+                    <div>
+                        <h1 className="font-bold text-xl">Symptom Tracker</h1>
+                        <p className="text-sm opacity-90">Identify potential conditions.</p>
+                    </div>
+                </div>
+                <Link to="/dashboard" className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-medium transition backdrop-blur-sm border border-white/10">
+                    ← Dashboard
+                </Link>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-50">
+            <div className="flex-1 max-h-[600px] overflow-y-auto p-6 space-y-6 bg-gray-50/50">
                 {messages.map((msg, idx) => (
                     <div
                         key={idx}
-                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                        className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                     >
+                        {msg.role === 'assistant' && (
+                            <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm shadow shrink-0">
+                                🤖
+                            </div>
+                        )}
+
                         <div
-                            className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.role === "user"
-                                ? "bg-blue-600 text-white rounded-br-none"
-                                : "bg-white text-gray-800 rounded-bl-none shadow"
+                            className={`max-w-[80%] p-4 rounded-2xl shadow-sm text-sm leading-relaxed ${msg.role === "user"
+                                ? "bg-emerald-600 text-white rounded-br-none"
+                                : "bg-white text-gray-800 rounded-bl-none border border-gray-100"
                                 }`}
                         >
                             {msg.text}
                         </div>
+
+                        {msg.role === 'user' && (
+                            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm shadow shrink-0">
+                                👤
+                            </div>
+                        )}
                     </div>
                 ))}
 
                 {loading && (
-                    <div className="bg-white p-3 rounded-xl w-fit shadow animate-pulse text-sm text-gray-500">
-                        Thinking...
+                    <div className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm shadow shrink-0">
+                            🤖
+                        </div>
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 animate-pulse text-sm text-gray-500">
+                            Thinking...
+                        </div>
                     </div>
                 )}
 
@@ -104,22 +133,24 @@ export default function SymptomTracker() {
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t flex gap-2">
-                <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    placeholder="Type your answer..."
-                    disabled={loading}
-                    className="flex-1 border rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-100"
-                />
-                <button
-                    onClick={sendMessage}
-                    disabled={loading}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition disabled:opacity-50"
-                >
-                    Send
-                </button>
+            <div className="p-4 bg-white border-t border-gray-100">
+                <div className="flex gap-2">
+                    <input
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                        placeholder="Type your response..."
+                        disabled={loading}
+                        className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none disabled:bg-gray-50 transition"
+                    />
+                    <button
+                        onClick={sendMessage}
+                        disabled={loading}
+                        className="bg-emerald-600 text-white px-6 py-2 rounded-xl hover:bg-emerald-700 transition shadow hover:shadow-lg disabled:opacity-50 font-semibold"
+                    >
+                        Send
+                    </button>
+                </div>
             </div>
         </div>
     );
