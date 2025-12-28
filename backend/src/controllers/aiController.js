@@ -150,3 +150,41 @@ Rules:
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.getHealthInsights = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        if (!userId) return res.status(400).json({ error: "Missing userId" });
+
+        // 1. Fetch Disease History
+        const snapshot = await db.collection('users').doc(userId).collection('diseases').limit(5).get();
+        const diseases = snapshot.docs.map(doc => doc.data());
+
+        // 2. Default message if no history
+        if (diseases.length === 0) {
+            return res.json({ insight: "We don't have enough health records to provide personalized insights yet. Add your history to get started!" });
+        }
+
+        // 3. Construct Prompt
+        const historyText = diseases.map(d => `- ${d.name} (${d.date}): ${d.comments || ''}`).join('\n');
+
+        const prompt = `
+            Analyze the following patient medical history (most recent first):
+            ${historyText}
+
+            Provide a short, friendly, and encouraging health insight or preventive tip (max 2 sentences). 
+            Focus on general wellness based on these conditions. Do not give specific medical prescriptions.
+        `;
+
+        // 4. Generate Insight
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const result = await model.generateContent(prompt);
+        const insight = result.response.text();
+
+        res.json({ insight });
+
+    } catch (error) {
+        console.error("Insight Error:", error);
+        res.status(500).json({ error: "Failed to generate insight" });
+    }
+};

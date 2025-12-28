@@ -16,8 +16,11 @@ export default function Dashboard() {
 
     // Disease History State
     const [diseases, setDiseases] = useState<Disease[]>([]);
+    const [insight, setInsight] = useState("");
     const [loading, setLoading] = useState(false);
+    const [loadingInsight, setLoadingInsight] = useState(false);
     const [showForm, setShowForm] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -32,6 +35,22 @@ export default function Dashboard() {
         navigate("/login");
     };
 
+    const fetchInsight = async () => {
+        if (!currentUser?.uid) return;
+        try {
+            setLoadingInsight(true);
+            const res = await fetch(`http://localhost:5000/api/ai/insights/${currentUser.uid}`);
+            if (res.ok) {
+                const data = await res.json();
+                setInsight(data.insight);
+            }
+        } catch (err) {
+            console.error("Failed to fetch insight", err);
+        } finally {
+            setLoadingInsight(false);
+        }
+    };
+
     const fetchDiseases = async () => {
         if (!currentUser?.uid) return;
         try {
@@ -40,6 +59,7 @@ export default function Dashboard() {
             if (res.ok) {
                 const data = await res.json();
                 setDiseases(data.diseases);
+                fetchInsight();
             }
         } catch (err) {
             console.error("Failed to fetch diseases", err);
@@ -66,7 +86,7 @@ export default function Dashboard() {
             if (res.ok) {
                 setFormData({ name: "", date: "", medicines: "", comments: "" });
                 setShowForm(false);
-                fetchDiseases(); // Refresh list
+                fetchDiseases();
             }
         } catch (err) {
             console.error("Failed to add disease", err);
@@ -74,19 +94,40 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-sans">
+        <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-sans relative">
 
-            {/* Sidebar (Desktop) */}
-            <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 p-6 shadow-sm">
-                <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 mb-10">
-                    HealthX
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden glass"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Sidebar (Responsive) */}
+            <aside className={`
+                fixed md:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 p-6 shadow-xl md:shadow-sm transform transition-transform duration-300 ease-in-out
+                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+            `}>
+                <div className="flex justify-between items-center mb-10">
+                    <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                        HealthX
+                    </div>
+                    {/* Close Button Mobile */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="md:hidden text-gray-500 hover:text-gray-700"
+                    >
+                        ✕
+                    </button>
                 </div>
 
-                <nav className="flex-1 space-y-2">
-                    <NavItem icon="🏠" label="Overview" active />
+                <nav className="flex-1 space-y-2 overflow-y-auto">
+                    <NavItem icon="🏠" label="Overview" active onClick={() => setIsMobileMenuOpen(false)} />
                     <NavItem icon="💬" label="AI Doctor" onClick={() => navigate('/ai-doctor')} />
                     <NavItem icon="📝" label="Symptom Tracker" onClick={() => navigate('/symptom-tracker')} />
                     <NavItem icon="📚" label="Disease Wiki" onClick={() => navigate('/diseases')} />
+                    <NavItem icon="🏥" label="Find Hospitals" onClick={() => navigate('/hospitals')} />
                     <NavItem icon="📢" label="Notices" onClick={() => navigate('/notices')} />
                 </nav>
 
@@ -101,13 +142,23 @@ export default function Dashboard() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full">
 
                 {/* Header */}
                 <header className="flex justify-between items-center mb-10">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-                        <p className="text-gray-500">Welcome back, {currentUser?.name || "User"}!</p>
+                    <div className="flex items-center gap-4">
+                        {/* Hamburger Button */}
+                        <button
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg md:hidden"
+                        >
+                            <span className="text-2xl">☰</span>
+                        </button>
+
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
+                            <p className="text-sm md:text-base text-gray-500">Welcome back, {currentUser?.name || "User"}!</p>
+                        </div>
                     </div>
 
                     <div className="hidden md:flex items-center gap-4">
@@ -116,6 +167,21 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </header>
+
+                {/* AI Insight Card */}
+                <div className="mb-10 p-6 rounded-3xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xl flex items-start gap-4 animate-in fade-in slide-in-from-top-4">
+                    <div className="text-4xl">✨</div>
+                    <div>
+                        <h2 className="text-lg font-bold mb-2 opacity-90">AI Health Insight</h2>
+                        {loadingInsight ? (
+                            <div className="animate-pulse h-4 bg-white/20 rounded w-64"></div>
+                        ) : (
+                            <p className="text-lg font-medium leading-relaxed">
+                                {insight || "Add your disease history to get personalized AI health insights! 🚀"}
+                            </p>
+                        )}
+                    </div>
+                </div>
 
                 {/* Disease History Section */}
                 <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-10">

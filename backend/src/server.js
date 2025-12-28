@@ -21,6 +21,8 @@ app.post("/api/login", loginUser);
 app.post("/api/chat/send", upload.single('image'), sendMessage);
 app.get("/api/chat/history/:userId", getHistory);
 app.post("/api/symptom-tracker", symptomTracker);
+const { getHealthInsights } = require('./controllers/aiController');
+app.get("/api/ai/insights/:userId", getHealthInsights);
 // 🟢 NEW: Hospital Finder Route
 app.get("/api/hospitals", getNearbyHospitals);
 
