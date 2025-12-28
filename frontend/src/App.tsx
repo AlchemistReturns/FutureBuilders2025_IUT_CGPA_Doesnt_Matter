@@ -10,7 +10,8 @@ import AiDoctor from "./components/AiDoctor";
 import DiseaseWiki from "./components/DiseaseWiki";
 import NoticeBoard from "./components/NoticeBoard";
 import SymptomTracker from "./components/SymptomTracker";
-
+// 🟢 Import the new component
+import HospitalFinder from "./components/HospitalFinder";
 function App() {
   return (
     <Router>
@@ -62,6 +63,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* 🟢 NEW ROUTE: Hospital Finder */}
+          <Route path="/hospitals" element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gray-50 py-8 px-4">
+                <HospitalFinder />
+              </div>
+            </ProtectedRoute>
+          } />
         </Routes>
       </AuthProvider>
     </Router>

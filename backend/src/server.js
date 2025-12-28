@@ -5,7 +5,8 @@ const { registerUser, loginUser } = require("./controllers/authController");
 const multer = require('multer');
 const { sendMessage, getHistory } = require('./controllers/aiController');
 const { symptomTracker } = require('./controllers/aiController');
-
+// 🟢 NEW: Import the Hospital Controller
+const { getNearbyHospitals } = require('./controllers/hospitalController');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -20,6 +21,8 @@ app.post("/api/login", loginUser);
 app.post("/api/chat/send", upload.single('image'), sendMessage);
 app.get("/api/chat/history/:userId", getHistory);
 app.post("/api/symptom-tracker", symptomTracker);
+// 🟢 NEW: Hospital Finder Route
+app.get("/api/hospitals", getNearbyHospitals);
 app.get("/", (req, res) => {
     res.send("Backend is running");
 });
