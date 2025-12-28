@@ -111,8 +111,22 @@ export default function DoctorDashboard() {
                                             Reject
                                         </button>
                                     </div>
+                                ) : apt.status === 'accepted' ? (
+                                    <div className="flex items-center gap-3">
+                                        <div className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold uppercase">
+                                            Accepted
+                                        </div>
+                                        <button
+                                            onClick={() => handleStatusUpdate(apt.id, 'completed')}
+                                            className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition"
+                                        >
+                                            Mark Complete
+                                        </button>
+                                    </div>
                                 ) : (
-                                    <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase ${apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                                    <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase ${apt.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                                            apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                                        }`}>
                                         {apt.status}
                                     </div>
                                 )}

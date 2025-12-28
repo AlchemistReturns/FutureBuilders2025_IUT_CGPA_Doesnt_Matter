@@ -193,7 +193,7 @@ const AiDoctor: React.FC = () => {
 
 
     return (
-        <div className="flex flex-col h-[calc(100vh-100px)] max-w-2xl mx-auto rounded-3xl overflow-hidden bg-white shadow-2xl border border-gray-100 font-sans">
+        <div className="flex flex-col h-[calc(100vh-100px)] max-w-3xl mx-auto rounded-3xl overflow-hidden bg-white shadow-2xl border border-gray-100 font-sans mt-8">
 
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white flex items-center justify-between">

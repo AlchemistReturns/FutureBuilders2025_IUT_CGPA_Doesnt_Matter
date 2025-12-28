@@ -70,7 +70,7 @@ export default function SymptomTracker() {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-100px)] max-w-2xl mx-auto rounded-3xl overflow-hidden bg-white shadow-2xl border border-gray-100 font-sans">
+        <div className="flex flex-col h-[calc(100vh-100px)] max-w-3xl mx-auto rounded-3xl overflow-hidden bg-white shadow-2xl border border-gray-100 font-sans mt-8">
 
             {/* Header */}
             <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-white flex items-center justify-between">
