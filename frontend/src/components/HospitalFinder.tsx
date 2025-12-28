@@ -199,9 +199,18 @@ const HospitalFinder: React.FC = () => {
 
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-                    <MapPin className="mr-2 text-red-600" /> Nearest Hospitals
-                </h2>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => window.history.back()}
+                        className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition"
+                        title="Go Back"
+                    >
+                        ←
+                    </button>
+                    <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                        <MapPin className="mr-2 text-red-600" /> Nearest Hospitals
+                    </h2>
+                </div>
 
                 {/* Controls Container */}
                 <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">

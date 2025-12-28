@@ -141,8 +141,8 @@ export default function DoctorList() {
                                         {doctor.specialty}
                                     </div>
                                     <div className="text-gray-500 text-sm mt-1 flex items-center">
-                                        <Star size={14} className="text-orange-400 mr-1 fill-orange-400" />
-                                        {doctor.experience} Exp.
+
+                                        {doctor.experience} Years of Experience.
                                     </div>
                                 </div>
                             </div>
@@ -153,9 +153,6 @@ export default function DoctorList() {
                                     className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200"
                                 >
                                     Book Now
-                                </button>
-                                <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
-                                    <UserPlus size={20} />
                                 </button>
                             </div>
                         </div>

@@ -7,8 +7,6 @@ const { sendMessage, getHistory } = require('./controllers/aiController');
 const { symptomTracker } = require('./controllers/aiController');
 // 🟢 NEW: Import the Hospital Controller
 const { getNearbyHospitals } = require('./controllers/hospitalController');
-// 🟢 NEW: Import Appointment Controller
-const { createAppointment, getDoctorAppointments, updateAppointmentStatus } = require('./controllers/appointmentController');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,8 +27,10 @@ app.get("/api/ai/insights/:userId", getHealthInsights);
 // 🟢 NEW: Hospital Finder Route
 app.get("/api/hospitals", getNearbyHospitals);
 // 🟢 NEW: Appointment Routes
+const { createAppointment, getDoctorAppointments, updateAppointmentStatus, getPatientAppointments } = require('./controllers/appointmentController');
 app.post("/api/appointments", createAppointment);
 app.get("/api/appointments/doctor/:doctorId", getDoctorAppointments);
+app.get("/api/appointments/patient/:patientId", getPatientAppointments);
 app.put("/api/appointments/:id/status", updateAppointmentStatus);
 
 // 🟢 NEW: Disease History Routes

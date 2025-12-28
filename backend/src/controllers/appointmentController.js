@@ -79,4 +79,28 @@ const updateAppointmentStatus = async (req, res) => {
     }
 };
 
-module.exports = { createAppointment, getDoctorAppointments, updateAppointmentStatus };
+// Get appointments for a specific patient
+const getPatientAppointments = async (req, res) => {
+    try {
+        const { patientId } = req.params;
+        const snapshot = await db.collection("appointments")
+            .where("patientId", "==", patientId)
+            .get();
+
+        const appointments = [];
+        snapshot.forEach(doc => {
+            appointments.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Sort by date/time manually since Firestore query sorting requires index
+        appointments.sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
+
+        res.status(200).json({ success: true, count: appointments.length, data: appointments });
+
+    } catch (error) {
+        console.error("Error fetching patient appointments:", error);
+        res.status(500).json({ error: "Failed to fetch appointments" });
+    }
+};
+
+module.exports = { createAppointment, getDoctorAppointments, updateAppointmentStatus, getPatientAppointments };

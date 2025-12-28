@@ -11,6 +11,7 @@ import SymptomTracker from "./components/SymptomTracker";
 import HospitalFinder from "./components/HospitalFinder";
 import DoctorDashboard from "./components/DoctorDashboard";
 import DoctorList from "./components/DoctorList";
+import AppLayout from "./components/AppLayout";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, role }: { children: React.ReactNode, role?: 'patient' | 'doctor' }) => {
@@ -42,72 +43,18 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/ai-doctor" element={<ProtectedRoute><AiDoctor /></ProtectedRoute>} />
-          <Route path="/diseases" element={<ProtectedRoute><div className="min-h-screen bg-gray-50 py-8 px-4"><DiseaseWiki /></div></ProtectedRoute>} />
-          <Route path="/notices" element={<ProtectedRoute><div className="min-h-screen bg-gray-50 py-8 px-4"><NoticeBoard /></div></ProtectedRoute>} />
-          <Route path="/symptom-tracker" element={<ProtectedRoute><SymptomTracker /></ProtectedRoute>} />
-          <Route path="/hospitals" element={<ProtectedRoute><div className="min-h-screen bg-gray-50 py-8 px-4"><HospitalFinder /></div></ProtectedRoute>} />
-          <Route path="/doctors" element={<ProtectedRoute><DoctorList /></ProtectedRoute>} />
 
-          <Route path="/doctor-dashboard" element={<ProtectedRoute role="doctor"><DoctorDashboard /></ProtectedRoute>} />
-          {/* 🟢 NEW ROUTE: Disease Wiki (Public) */}
-          <Route
-            path="/diseases"
-            element={
-              <div className="min-h-screen bg-gray-50 py-8 px-4">
-                <DiseaseWiki />
-              </div>
-            }
-          />
-          {/* 🟢 NEW ROUTE: Notices (Public) */}
-          <Route path="/notices" element={
-            <div className="min-h-screen bg-gray-50 py-8 px-4">
-              <NoticeBoard />
-            </div>
-          } />
-
-          <Route
-            path="/history"
-            element={
-              <ProtectedRoute>
-                <DiseaseHistory />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/ai-doctor"
-            element={
-              <ProtectedRoute>
-                <AiDoctor />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/symptom-tracker"
-            element={
-              <ProtectedRoute>
-                <SymptomTracker />
-              </ProtectedRoute>
-            }
-          />
-          {/* 🟢 NEW ROUTE: Hospital Finder */}
-          <Route path="/hospitals" element={
-            <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50 py-8 px-4">
-                <HospitalFinder />
-              </div>
-            </ProtectedRoute>
-          } />
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/ai-doctor" element={<ProtectedRoute><AiDoctor /></ProtectedRoute>} />
+            <Route path="/diseases" element={<ProtectedRoute><div className="bg-gray-50 py-8 px-4"><DiseaseWiki /></div></ProtectedRoute>} />
+            <Route path="/notices" element={<ProtectedRoute><div className="bg-gray-50 py-8 px-4"><NoticeBoard /></div></ProtectedRoute>} />
+            <Route path="/symptom-tracker" element={<ProtectedRoute><SymptomTracker /></ProtectedRoute>} />
+            <Route path="/hospitals" element={<ProtectedRoute><div className="bg-gray-50 py-8 px-4"><HospitalFinder /></div></ProtectedRoute>} />
+            <Route path="/doctors" element={<ProtectedRoute><DoctorList /></ProtectedRoute>} />
+            <Route path="/history" element={<ProtectedRoute><DiseaseHistory /></ProtectedRoute>} />
+            <Route path="/doctor-dashboard" element={<ProtectedRoute role="doctor"><DoctorDashboard /></ProtectedRoute>} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>

@@ -10,17 +10,26 @@ interface Disease {
     comments: string;
 }
 
+interface Appointment {
+    id: string;
+    doctorName: string;
+    date: string;
+    time: string;
+    status: string;
+    reason: string;
+}
+
 export default function Dashboard() {
-    const { currentUser, logout } = useAuth();
+    const { currentUser } = useAuth();
     const navigate = useNavigate();
 
-    // Disease History State
+    // State
     const [diseases, setDiseases] = useState<Disease[]>([]);
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [insight, setInsight] = useState("");
     const [loading, setLoading] = useState(false);
     const [loadingInsight, setLoadingInsight] = useState(false);
     const [showForm, setShowForm] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -29,11 +38,6 @@ export default function Dashboard() {
         medicines: "",
         comments: ""
     });
-
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
-    };
 
     const fetchInsight = async () => {
         if (!currentUser?.uid) return;
@@ -48,6 +52,19 @@ export default function Dashboard() {
             console.error("Failed to fetch insight", err);
         } finally {
             setLoadingInsight(false);
+        }
+    };
+
+    const fetchAppointments = async () => {
+        if (!currentUser?.uid) return;
+        try {
+            const res = await fetch(`http://localhost:5000/api/appointments/patient/${currentUser.uid}`);
+            if (res.ok) {
+                const data = await res.json();
+                setAppointments(data.data || []);
+            }
+        } catch (err) {
+            console.error("Failed to fetch appointments", err);
         }
     };
 
@@ -70,6 +87,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         fetchDiseases();
+        fetchAppointments();
     }, [currentUser]);
 
     const handleAddDisease = async (e: React.FormEvent) => {
@@ -94,258 +112,170 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-sans relative">
-
-            {/* Mobile Menu Overlay */}
-            {isMobileMenuOpen && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-40 md:hidden glass"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                />
-            )}
-
-            {/* Sidebar (Responsive) */}
-            <aside className={`
-                fixed md:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 p-6 shadow-xl md:shadow-sm transform transition-transform duration-300 ease-in-out
-                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-            `}>
-                <div className="flex justify-between items-center mb-10">
-                    <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                        HealthX
-                    </div>
-                    {/* Close Button Mobile */}
-                    <button
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="md:hidden text-gray-500 hover:text-gray-700"
-                    >
-                        ✕
-                    </button>
+        <div className="p-4 md:p-8 font-sans">
+            {/* Header */}
+            <header className="flex justify-between items-center mb-10">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+                    <p className="text-gray-500">Welcome back, {currentUser?.name || "User"}!</p>
                 </div>
 
-                <nav className="flex-1 space-y-2">
-                    <NavItem icon="🏠" label="Overview" active />
-                    <NavItem icon="👨‍⚕️" label="Find Doctors" onClick={() => navigate('/doctors')} />
-                <nav className="flex-1 space-y-2 overflow-y-auto">
-                    <NavItem icon="🏠" label="Overview" active onClick={() => setIsMobileMenuOpen(false)} />
-                    <NavItem icon="💬" label="AI Doctor" onClick={() => navigate('/ai-doctor')} />
-                    <NavItem icon="📝" label="Symptom Tracker" onClick={() => navigate('/symptom-tracker')} />
-                    <NavItem icon="📚" label="Disease Wiki" onClick={() => navigate('/diseases')} />
-                    <NavItem icon="🏥" label="Find Hospitals" onClick={() => navigate('/hospitals')} />
-                    <NavItem icon="📢" label="Notices" onClick={() => navigate('/notices')} />
-                </nav>
-
-                <div className="pt-6 border-t border-gray-100">
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition font-medium"
-                    >
-                        <span>🚪</span> Log Out
-                    </button>
+                <div className="hidden md:flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center font-bold">
+                        {currentUser?.name?.[0] || "U"}
+                    </div>
                 </div>
-            </aside>
+            </header>
 
-            {/* Main Content */}
-            <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full">
+            {/* AI Insight Card */}
+            <div className="mb-10 p-6 rounded-3xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xl flex items-start gap-4 animate-in fade-in slide-in-from-top-4">
+                <div className="text-4xl">✨</div>
+                <div>
+                    <h2 className="text-lg font-bold mb-2 opacity-90">AI Health Insight</h2>
+                    {loadingInsight ? (
+                        <div className="animate-pulse h-4 bg-white/20 rounded w-64"></div>
+                    ) : (
+                        <p className="text-lg font-medium leading-relaxed">
+                            {insight || "Add your disease history to get personalized AI health insights! 🚀"}
+                        </p>
+                    )}
+                </div>
+            </div>
 
-                {/* Header */}
-                <header className="flex justify-between items-center mb-10">
-                    <div className="flex items-center gap-4">
-                        {/* Hamburger Button */}
-                        <button
-                            onClick={() => setIsMobileMenuOpen(true)}
-                            className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg md:hidden"
-                        >
-                            <span className="text-2xl">☰</span>
-                        </button>
-
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
-                            <p className="text-sm md:text-base text-gray-500">Welcome back, {currentUser?.name || "User"}!</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                {/* Appointments Section */}
+                <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">🗓️ Upcoming Appointments</h2>
+                    {appointments.length === 0 ? (
+                        <div className="text-center py-10 text-gray-400 bg-gray-50 rounded-2xl border-dashed border-2 border-gray-200">
+                            <p>No appointments scheduled.</p>
+                            <button onClick={() => navigate('/doctors')} className="mt-2 text-blue-600 font-bold hover:underline">Find a Doctor</button>
                         </div>
-                    </div>
-
-                    <div className="hidden md:flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center font-bold">
-                            {currentUser?.name?.[0] || "U"}
+                    ) : (
+                        <div className="space-y-4">
+                            {appointments.slice(0, 3).map(app => (
+                                <div key={app.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <div>
+                                        <h3 className="font-bold text-gray-900">{app.doctorName}</h3>
+                                        <p className="text-sm text-gray-500">{app.date} at {app.time}</p>
+                                    </div>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${app.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                                            app.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                        {app.status.toUpperCase()}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
-                    </div>
-                </header>
-
-                {/* AI Insight Card */}
-                <div className="mb-10 p-6 rounded-3xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xl flex items-start gap-4 animate-in fade-in slide-in-from-top-4">
-                    <div className="text-4xl">✨</div>
-                    <div>
-                        <h2 className="text-lg font-bold mb-2 opacity-90">AI Health Insight</h2>
-                        {loadingInsight ? (
-                            <div className="animate-pulse h-4 bg-white/20 rounded w-64"></div>
-                        ) : (
-                            <p className="text-lg font-medium leading-relaxed">
-                                {insight || "Add your disease history to get personalized AI health insights! 🚀"}
-                            </p>
-                        )}
-                    </div>
+                    )}
                 </div>
 
                 {/* Disease History Section */}
-                <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-10">
+                <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold text-gray-900">🩺 Disease History</h2>
                         <button
                             onClick={() => setShowForm(!showForm)}
                             className="bg-blue-600 text-white px-5 py-2 rounded-xl font-medium hover:bg-blue-700 transition shadow-lg shadow-blue-500/30"
                         >
-                            {showForm ? "Cancel" : "+ Add Record"}
+                            {showForm ? "Cancel" : "+ Add"}
                         </button>
                     </div>
 
                     {showForm && (
                         <form onSubmit={handleAddDisease} className="mb-8 p-6 bg-blue-50 rounded-2xl border border-blue-100 animate-in fade-in slide-in-from-top-4">
-                            <h3 className="text-lg font-bold text-blue-900 mb-4">Add New Record</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="grid gap-4 mb-4">
                                 <input
                                     type="text"
-                                    placeholder="Disease Name (e.g. Flu)"
-                                    className="p-3 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Name"
+                                    className="p-3 rounded-xl border"
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                                     required
                                 />
                                 <input
                                     type="date"
-                                    className="p-3 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="p-3 rounded-xl border"
                                     value={formData.date}
                                     onChange={e => setFormData({ ...formData, date: e.target.value })}
                                     required
                                 />
                                 <input
                                     type="text"
-                                    placeholder="Medicines taken"
-                                    className="p-3 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 md:col-span-2"
+                                    placeholder="Medicines"
+                                    className="p-3 rounded-xl border"
                                     value={formData.medicines}
                                     onChange={e => setFormData({ ...formData, medicines: e.target.value })}
                                 />
                                 <textarea
-                                    placeholder="Comments / Symptoms / Notes"
-                                    className="p-3 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 md:col-span-2"
+                                    placeholder="Notes"
+                                    className="p-3 rounded-xl border"
                                     value={formData.comments}
                                     onChange={e => setFormData({ ...formData, comments: e.target.value })}
-                                    rows={3}
+                                    rows={2}
                                 />
                             </div>
-                            <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">Save Record</button>
+                            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-xl font-bold">Save</button>
                         </form>
                     )}
 
-                    {loading ? (
-                        <div className="text-center py-10 text-gray-400">Loading history...</div>
-                    ) : (
-                        <div className="space-y-4">
-                            {diseases.length === 0 ? (
-                                <div className="text-center py-10 text-gray-400 bg-gray-50 rounded-2xl border-dashed border-2 border-gray-200">
-                                    <p>No disease history found. Stay healthy! 💪</p>
-                                </div>
-                            ) : (
-                                <>
-                                    {diseases.slice(0, 2).map((d) => (
-                                        <div key={d.id} className="p-4 rounded-2xl border border-gray-100 hover:bg-gray-50 transition flex flex-col md:flex-row justify-between gap-4">
-                                            <div>
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <h3 className="text-lg font-bold text-gray-900">{d.name}</h3>
-                                                    <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500">{d.date}</span>
-                                                </div>
-                                                {d.medicines && (
-                                                    <p className="text-sm text-gray-600 mb-1">
-                                                        <span className="font-semibold text-blue-600">Rx:</span> {d.medicines}
-                                                    </p>
-                                                )}
-                                                {d.comments && (
-                                                    <p className="text-sm text-gray-500 italic">
-                                                        "{d.comments}"
-                                                    </p>
-                                                )}
-                                            </div>
+                    <div className="space-y-4">
+                        {diseases.length === 0 ? (
+                            <p className="text-gray-400 text-center py-4">No records found.</p>
+                        ) : (
+                            diseases.slice(0, 3).map((d) => (
+                                <div key={d.id} className="p-4 rounded-2xl border border-gray-100 hover:bg-gray-50 flex justify-between">
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-gray-900">{d.name}</h3>
+                                            <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500">{d.date}</span>
                                         </div>
-                                    ))}
-
-                                    {diseases.length > 3 && (
-                                        <button
-                                            onClick={() => navigate('/history')}
-                                            className="w-full py-3 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition"
-                                        >
-                                            View All History ({diseases.length}) →
-                                        </button>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    )}
+                                        {d.medicines && <p className="text-xs text-gray-500">Rx: {d.medicines}</p>}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                        {diseases.length > 3 && (
+                            <button onClick={() => navigate('/history')} className="w-full text-blue-600 font-bold mt-2">View All →</button>
+                        )}
+                    </div>
                 </div>
+            </div>
 
-                {/* Quick Actions Grid */}
-                <h2 className="text-xl font-bold text-gray-800 mb-6">Quick Actions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <ActionCard
-                        title="Consult AI Doctor"
-                        desc="Get instant medical advice."
-                        icon="🩺"
-                        color="from-blue-500 to-indigo-600"
-                        onClick={() => navigate('/ai-doctor')}
-                    />
-                    <ActionCard
-                        title="Track Symptoms"
-                        desc="Log your daily potential."
-                        icon="📉"
-                        color="from-emerald-500 to-teal-600"
-                        onClick={() => navigate('/symptom-tracker')}
-                    />
-                    <ActionCard
-                        title="Search Diseases"
-                        desc="Learn about conditions."
-                        icon="📚"
-                        color="from-orange-400 to-red-500"
-                        onClick={() => navigate('/diseases')}
-                    />
-                    <ActionCard
-                        title="Health Notices"
-                        desc="Latest medical alerts."
-                        icon="📢"
-                        color="from-purple-500 to-pink-500"
-                        onClick={() => navigate('/notices')}
-                        className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
-                    />
-                    <ActionCard
-                        title="Nearest Hospitals"
-                        desc="Find hospitals closest to you"
-                        icon="🏥"
-                        color="from-red-500 to-rose-600"
-                        onClick={() => navigate('/hospitals')}
-                    />
-                    <ActionCard
-                        title="Find Doctors"
-                        desc="Book appointments."
-                        icon="👨‍⚕️"
-                        color="from-blue-500 to-cyan-600"
-                        onClick={() => navigate('/doctors')}
-                    />
-                </div>
-            </main>
+            {/* Quick Actions Grid */}
+            <h2 className="text-xl font-bold text-gray-800 mb-6">Quick Actions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <ActionCard
+                    title="Consult AI Doctor"
+                    desc="Get instant medical advice."
+                    icon="🩺"
+                    color="from-blue-500 to-indigo-600"
+                    onClick={() => navigate('/ai-doctor')}
+                />
+                <ActionCard
+                    title="Track Symptoms"
+                    desc="Log your daily potential."
+                    icon="📉"
+                    color="from-emerald-500 to-teal-600"
+                    onClick={() => navigate('/symptom-tracker')}
+                />
+                <ActionCard
+                    title="Search Diseases"
+                    desc="Learn about conditions."
+                    icon="📚"
+                    color="from-orange-400 to-red-500"
+                    onClick={() => navigate('/diseases')}
+                />
+                <ActionCard
+                    title="Find Doctors"
+                    desc="Book appointments."
+                    icon="👨‍⚕️"
+                    color="from-blue-500 to-cyan-600"
+                    onClick={() => navigate('/doctors')}
+                />
+            </div>
         </div>
-    );
-}
-
-// Components
-
-function NavItem({ icon, label, active = false, onClick }: { icon: string, label: string, active?: boolean, onClick?: () => void }) {
-    return (
-        <button
-            onClick={onClick}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${active
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-600 hover:bg-gray-50'
-                }`}
-        >
-            <span>{icon}</span> {label}
-        </button>
     );
 }
 
