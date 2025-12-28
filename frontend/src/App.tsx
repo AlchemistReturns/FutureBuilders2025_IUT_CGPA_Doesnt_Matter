@@ -6,6 +6,7 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AiDoctor from "./components/AiDoctor";
+import SymptomTracker from "./components/SymptomTracker";
 
 function App() {
   return (
@@ -28,6 +29,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AiDoctor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/symptom-tracker"
+            element={
+              <ProtectedRoute>
+                <SymptomTracker />
               </ProtectedRoute>
             }
           />
