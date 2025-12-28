@@ -277,9 +277,13 @@ const HospitalFinder: React.FC = () => {
                             </span>
                         </div>
 
-                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded mt-2 inline-block">
-                            {hospital.type}
-                        </span>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {hospital.type?.split(';').map((tag: string, i: number) => (
+                                <span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                                    {tag.trim()}
+                                </span>
+                            ))}
+                        </div>
 
                         <div className="mt-4 flex gap-2">
                             {/* Navigation Button */}

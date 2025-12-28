@@ -24,12 +24,20 @@ app.get("/api/doctors", getDoctors); // 🟢 NEW: Get Doctors List
 app.post("/api/chat/send", upload.single('image'), sendMessage);
 app.get("/api/chat/history/:userId", getHistory);
 app.post("/api/symptom-tracker", symptomTracker);
+const { getHealthInsights } = require('./controllers/aiController');
+app.get("/api/ai/insights/:userId", getHealthInsights);
 // 🟢 NEW: Hospital Finder Route
 app.get("/api/hospitals", getNearbyHospitals);
 // 🟢 NEW: Appointment Routes
 app.post("/api/appointments", createAppointment);
 app.get("/api/appointments/doctor/:doctorId", getDoctorAppointments);
 app.put("/api/appointments/:id/status", updateAppointmentStatus);
+
+// 🟢 NEW: Disease History Routes
+const { addDisease, getDiseases } = require('./controllers/diseaseController');
+app.post("/api/diseases", addDisease);
+app.get("/api/diseases/:userId", getDiseases);
+
 app.get("/", (req, res) => {
     res.send("Backend is running");
 });

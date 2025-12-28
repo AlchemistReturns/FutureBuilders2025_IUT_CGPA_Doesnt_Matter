@@ -10,8 +10,14 @@ export default function Home() {
 
             {/* Navbar */}
             <nav className="flex justify-between items-center p-6 max-w-7xl mx-auto w-full">
-                <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                    HealthX
+                <div className="flex items-center gap-8">
+                    <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                        HealthX
+                    </div>
+                    <div className="hidden md:flex gap-6">
+                        <Link to="/diseases" className="text-gray-600 hover:text-blue-600 font-medium transition">Encyclopedia</Link>
+                        <Link to="/notices" className="text-gray-600 hover:text-blue-600 font-medium transition">Notices</Link>
+                    </div>
                 </div>
                 <div className="space-x-4">
                     {currentUser ? (

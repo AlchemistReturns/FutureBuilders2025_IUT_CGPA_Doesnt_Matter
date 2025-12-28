@@ -31,6 +31,7 @@ const ProtectedRoute = ({ children, role }: { children: React.ReactNode, role?: 
 };
 
 // ... Rest of the file
+import DiseaseHistory from "./components/DiseaseHistory";
 
 function App() {
   return (
@@ -50,6 +51,63 @@ function App() {
           <Route path="/doctors" element={<ProtectedRoute><DoctorList /></ProtectedRoute>} />
 
           <Route path="/doctor-dashboard" element={<ProtectedRoute role="doctor"><DoctorDashboard /></ProtectedRoute>} />
+          {/* 🟢 NEW ROUTE: Disease Wiki (Public) */}
+          <Route
+            path="/diseases"
+            element={
+              <div className="min-h-screen bg-gray-50 py-8 px-4">
+                <DiseaseWiki />
+              </div>
+            }
+          />
+          {/* 🟢 NEW ROUTE: Notices (Public) */}
+          <Route path="/notices" element={
+            <div className="min-h-screen bg-gray-50 py-8 px-4">
+              <NoticeBoard />
+            </div>
+          } />
+
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <DiseaseHistory />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ai-doctor"
+            element={
+              <ProtectedRoute>
+                <AiDoctor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/symptom-tracker"
+            element={
+              <ProtectedRoute>
+                <SymptomTracker />
+              </ProtectedRoute>
+            }
+          />
+          {/* 🟢 NEW ROUTE: Hospital Finder */}
+          <Route path="/hospitals" element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gray-50 py-8 px-4">
+                <HospitalFinder />
+              </div>
+            </ProtectedRoute>
+          } />
         </Routes>
       </Router>
     </AuthProvider>

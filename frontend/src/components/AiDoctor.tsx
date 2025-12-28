@@ -3,6 +3,7 @@ import imageCompression from 'browser-image-compression';
 import { useAuth } from '../context/AuthContext';
 import { offlineData } from '../data/offlineData';
 import { Link } from "react-router-dom";
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
     id?: string;
@@ -236,9 +237,26 @@ const AiDoctor: React.FC = () => {
                                     📎 Image attached
                                 </div>
                             )}
-                            <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                                {msg.text}
-                            </p>
+                            <div className={`text-sm leading-relaxed ${msg.sender === 'user' ? 'text-white' : 'text-gray-800'}`}>
+                                {msg.sender === 'user' ? (
+                                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                                ) : (
+                                    <ReactMarkdown
+                                        className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4"
+                                        components={{
+                                            // Custom components to ensure styling works within the chat bubble
+                                            p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                                            ul: ({ node, ...props }) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                                            ol: ({ node, ...props }) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                                            strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+                                            a: ({ node, ...props }) => <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                                        }}
+                                    >
+                                        {msg.text}
+                                    </ReactMarkdown>
+                                )}
+                            </div>
                             {msg.status === 'failed' && (
                                 <div className="text-xs text-red-200 mt-1 flex items-center gap-1">
                                     ⚠️ Offline - Saved
