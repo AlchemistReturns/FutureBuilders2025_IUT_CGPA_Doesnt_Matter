@@ -9,6 +9,8 @@ import AiDoctor from "./components/AiDoctor";
 // 🟢 Import the component
 import DiseaseWiki from "./components/DiseaseWiki";
 import NoticeBoard from "./components/NoticeBoard";
+import SymptomTracker from "./components/SymptomTracker";
+
 function App() {
   return (
     <Router>
@@ -52,6 +54,14 @@ function App() {
               </div>
             </ProtectedRoute>
           } />
+          <Route
+            path="/symptom-tracker"
+            element={
+              <ProtectedRoute>
+                <SymptomTracker />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </AuthProvider>
     </Router>
