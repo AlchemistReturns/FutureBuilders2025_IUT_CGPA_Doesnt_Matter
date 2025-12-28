@@ -38,6 +38,13 @@ const Dashboard: React.FC = () => {
                     >
                         Health Notices
                     </button>
+                    {/* 🟢 4. NEW BUTTON: Hospital Finder */}
+                    <button
+                        onClick={() => navigate('/hospitals')}
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition font-bold"
+                    >
+                        Find Nearest Hospital
+                    </button>
                     <button
                         onClick={handleLogout}
                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
