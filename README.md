@@ -89,6 +89,9 @@ Our solution is explicitly designed for the "Hill Tracts" scenario where interne
     npm run dev
     ```
 4.  Open `http://localhost:5173` in your browser.
+
+### 📸 Project Screenshots
+
 ![User Dashboard](1.png)
 
 
