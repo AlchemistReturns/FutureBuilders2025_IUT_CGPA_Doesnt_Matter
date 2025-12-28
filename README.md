@@ -89,3 +89,18 @@ Our solution is explicitly designed for the "Hill Tracts" scenario where interne
     npm run dev
     ```
 4.  Open `http://localhost:5173` in your browser.
+![User Dashboard](1.png)
+
+
+![AI Doctor Interface](2.png)
+
+![Symptom Tracker](3.png)
+
+![Find Doctors](4.png)
+
+
+![Doctor Dashboard](5.png)
+
+![Hospital Finder](6.png)
+
+![Disease Wiki](7.png)
