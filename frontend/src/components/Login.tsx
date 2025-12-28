@@ -27,8 +27,14 @@ export default function Login() {
             }
 
             const data = await response.json();
-            login(data.token, { uid: data.userId, email: data.email });
-            navigate("/dashboard");
+            login(data.token, { uid: data.userId, email: data.email, role: data.role as any });
+
+            // Redirect based on role
+            if (data.role === 'doctor') {
+                navigate("/doctor-dashboard");
+            } else {
+                navigate("/dashboard");
+            }
         } catch (err: any) {
             setError(err.message);
         } finally {
