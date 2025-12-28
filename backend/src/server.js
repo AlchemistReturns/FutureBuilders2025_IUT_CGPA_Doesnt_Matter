@@ -23,6 +23,12 @@ app.get("/api/chat/history/:userId", getHistory);
 app.post("/api/symptom-tracker", symptomTracker);
 // 🟢 NEW: Hospital Finder Route
 app.get("/api/hospitals", getNearbyHospitals);
+
+// 🟢 NEW: Disease History Routes
+const { addDisease, getDiseases } = require('./controllers/diseaseController');
+app.post("/api/diseases", addDisease);
+app.get("/api/diseases/:userId", getDiseases);
+
 app.get("/", (req, res) => {
     res.send("Backend is running");
 });

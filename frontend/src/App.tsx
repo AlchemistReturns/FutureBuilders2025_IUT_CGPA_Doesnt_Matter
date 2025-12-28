@@ -12,6 +12,8 @@ import NoticeBoard from "./components/NoticeBoard";
 import SymptomTracker from "./components/SymptomTracker";
 // 🟢 Import the new component
 import HospitalFinder from "./components/HospitalFinder";
+import DiseaseHistory from "./components/DiseaseHistory";
+
 function App() {
   return (
     <Router>
@@ -20,6 +22,31 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          {/* 🟢 NEW ROUTE: Disease Wiki (Public) */}
+          <Route
+            path="/diseases"
+            element={
+              <div className="min-h-screen bg-gray-50 py-8 px-4">
+                <DiseaseWiki />
+              </div>
+            }
+          />
+          {/* 🟢 NEW ROUTE: Notices (Public) */}
+          <Route path="/notices" element={
+            <div className="min-h-screen bg-gray-50 py-8 px-4">
+              <NoticeBoard />
+            </div>
+          } />
+
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <DiseaseHistory />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/dashboard"
             element={
@@ -36,25 +63,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* 🟢 NEW ROUTE: Disease Wiki */}
-          <Route
-            path="/diseases"
-            element={
-              <ProtectedRoute>
-                <div className="min-h-screen bg-gray-50 py-8 px-4">
-                  <DiseaseWiki />
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          {/* 🟢 NEW ROUTE: Notices */}
-          <Route path="/notices" element={
-            <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50 py-8 px-4">
-                <NoticeBoard />
-              </div>
-            </ProtectedRoute>
-          } />
           <Route
             path="/symptom-tracker"
             element={
