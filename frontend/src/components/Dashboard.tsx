@@ -115,22 +115,14 @@ export default function Dashboard() {
                         color="from-purple-500 to-pink-500"
                         onClick={() => navigate('/notices')}
                         className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
-                    >
-                        Health Notices
-                    </button>
-                    {/* 🟢 4. NEW BUTTON: Hospital Finder */}
-                    <button
+                    />
+                    <ActionCard
+                        title="Nearest Hospitals"
+                        desc="Find hospitals closest to you"
+                        icon="📢"
+                        color="from-purple-500 to-pink-500"
                         onClick={() => navigate('/hospitals')}
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition font-bold"
-                    >
-                        Find Nearest Hospital
-                    </button>
-                    <button
-                        onClick={handleLogout}
-                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-                    >
-                        Logout
-                    </button>
+                        className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
                     />
                 </div>
             </main>
@@ -145,8 +137,8 @@ function NavItem({ icon, label, active = false, onClick }: { icon: string, label
         <button
             onClick={onClick}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${active
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-blue-50 text-blue-600'
+                : 'text-gray-600 hover:bg-gray-50'
                 }`}
         >
             <span>{icon}</span> {label}
