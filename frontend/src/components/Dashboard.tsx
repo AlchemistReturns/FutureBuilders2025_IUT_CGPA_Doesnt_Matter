@@ -122,6 +122,9 @@ export default function Dashboard() {
                     </button>
                 </div>
 
+                <nav className="flex-1 space-y-2">
+                    <NavItem icon="🏠" label="Overview" active />
+                    <NavItem icon="👨‍⚕️" label="Find Doctors" onClick={() => navigate('/doctors')} />
                 <nav className="flex-1 space-y-2 overflow-y-auto">
                     <NavItem icon="🏠" label="Overview" active onClick={() => setIsMobileMenuOpen(false)} />
                     <NavItem icon="💬" label="AI Doctor" onClick={() => navigate('/ai-doctor')} />
@@ -313,10 +316,16 @@ export default function Dashboard() {
                     <ActionCard
                         title="Nearest Hospitals"
                         desc="Find hospitals closest to you"
-                        icon="📢"
-                        color="from-purple-500 to-pink-500"
+                        icon="🏥"
+                        color="from-red-500 to-rose-600"
                         onClick={() => navigate('/hospitals')}
-                        className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
+                    />
+                    <ActionCard
+                        title="Find Doctors"
+                        desc="Book appointments."
+                        icon="👨‍⚕️"
+                        color="from-blue-500 to-cyan-600"
+                        onClick={() => navigate('/doctors')}
                     />
                 </div>
             </main>

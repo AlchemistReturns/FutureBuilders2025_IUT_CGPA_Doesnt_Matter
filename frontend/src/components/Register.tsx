@@ -12,7 +12,10 @@ export default function Register() {
         gender: "Male",
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        role: "patient",
+        specialty: "",
+        experience: ""
     });
 
     const [error, setError] = useState("");
@@ -47,8 +50,14 @@ export default function Register() {
             }
 
             const data = await response.json();
-            login(data.token, { uid: data.userId, email: data.email });
-            navigate("/dashboard");
+            login(data.token, { uid: data.userId, email: data.email, role: data.role as any });
+
+            // Redirect based on role
+            if (data.role === 'doctor') {
+                navigate("/doctor-dashboard");
+            } else {
+                navigate("/dashboard");
+            }
 
         } catch (err: any) {
             setError(err.message);
@@ -102,6 +111,25 @@ export default function Register() {
                     )}
 
                     <form onSubmit={handleRegister} className="space-y-4">
+
+                        {/* Role Selection */}
+                        <div className="flex gap-4 p-1 bg-gray-100 rounded-lg">
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, role: 'patient' })}
+                                className={`flex-1 py-2 text-sm font-bold rounded-md transition ${formData.role === 'patient' ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:bg-gray-200'}`}
+                            >
+                                Patient
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, role: 'doctor' })}
+                                className={`flex-1 py-2 text-sm font-bold rounded-md transition ${formData.role === 'doctor' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-gray-200'}`}
+                            >
+                                Doctor
+                            </button>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Full Name</label>
@@ -122,6 +150,20 @@ export default function Register() {
                             </select>
                         </div>
 
+                        {/* Doctor Specific Fields */}
+                        {formData.role === 'doctor' && (
+                            <div className="grid grid-cols-2 gap-4 animate-fade-in">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Specialty</label>
+                                    <input name="specialty" type="text" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none bg-blue-50" placeholder="Cardiologist" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Experience (Yrs)</label>
+                                    <input name="experience" type="text" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none bg-blue-50" placeholder="5 Years" />
+                                </div>
+                            </div>
+                        )}
+
                         <div>
                             <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Email</label>
                             <input name="email" type="email" onChange={handleChange} required className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-gray-50" placeholder="john@example.com" />
@@ -141,9 +183,9 @@ export default function Register() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full mt-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-xl hover:opacity-90 transition-opacity shadow-lg disabled:opacity-70"
+                            className={`w-full mt-6 text-white font-bold py-3 rounded-xl hover:opacity-90 transition-opacity shadow-lg disabled:opacity-70 ${formData.role === 'doctor' ? 'bg-gradient-to-r from-blue-600 to-indigo-600' : 'bg-gradient-to-r from-emerald-600 to-teal-600'}`}
                         >
-                            {loading ? "Creating Account..." : "Register"}
+                            {loading ? "Creating Account..." : `Register as ${formData.role === 'doctor' ? 'Doctor' : 'Patient'}`}
                         </button>
                     </form>
 

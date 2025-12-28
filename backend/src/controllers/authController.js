@@ -23,7 +23,10 @@ const registerUser = async (req, res) => {
             age,
             gender,
             email,
-            password // Storing password as requested
+            password, // Storing password as requested
+            role: req.body.role || 'patient', // Default to patient
+            specialty: req.body.specialty || '', // For doctors
+            experience: req.body.experience || '' // For doctors
         });
 
         // 3. Authenticate to get ID Token (simulate login)
@@ -34,7 +37,8 @@ const registerUser = async (req, res) => {
             token: tokenData.idToken,
             refreshToken: tokenData.refreshToken,
             userId: uid,
-            email: email
+            email: email,
+            role: req.body.role || 'patient'
         });
 
     } catch (error) {
@@ -52,12 +56,19 @@ const loginUser = async (req, res) => {
 
     try {
         const tokenData = await signInWithPassword(email, password);
+
+        // Fetch user role from Firestore
+        const userDoc = await db.collection("users").doc(tokenData.localId).get();
+        const userData = userDoc.data();
+        const role = userData ? userData.role : 'patient';
+
         res.status(200).json({
             message: "Login successful",
             token: tokenData.idToken,
             refreshToken: tokenData.refreshToken,
             userId: tokenData.localId,
-            email: email
+            email: email,
+            role: role
         });
     } catch (error) {
         console.error("Error logging in:", error);
@@ -65,4 +76,26 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+const getDoctors = async (req, res) => {
+    try {
+        const doctorsSnapshot = await db.collection("users").where("role", "==", "doctor").get();
+        const doctors = [];
+        doctorsSnapshot.forEach(doc => {
+            const data = doc.data();
+            // Exclude sensitive info
+            doctors.push({
+                id: doc.id,
+                name: data.name,
+                specialty: data.specialty || "General Physician",
+                experience: data.experience || "N/A",
+                gender: data.gender
+            });
+        });
+        res.json({ success: true, count: doctors.length, data: doctors });
+    } catch (error) {
+        console.error("Error fetching doctors:", error);
+        res.status(500).json({ error: "Failed to fetch doctors" });
+    }
+};
+
+module.exports = { registerUser, loginUser, getDoctors };

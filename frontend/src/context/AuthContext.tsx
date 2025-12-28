@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 interface User {
     uid: string;
     email: string | null;
+    role?: 'patient' | 'doctor' | 'admin'; // Added role
 }
 
 interface AuthContextType {
