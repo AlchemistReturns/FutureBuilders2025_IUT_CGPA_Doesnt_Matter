@@ -23,13 +23,15 @@ Create a solution to overcome this challenge for the helpless people with limite
 
 ---
 
-### 3. Solution Overview
-**Rural Health AI** is a hybrid, bilingual web application designed to act as a "First-Aid Assistant" for remote communities. It empowers local rural dispensers and individuals to get instant medical advice, even with poor connectivity.
 
 **Key Features Implemented:**
-* **🤖 AI Doctor (Symptom Scanner):** Users can describe symptoms (text) or upload images of visible conditions (cuts, rashes). The system provides immediate first-aid advice in 
-* **📚 Medical Encyclopedia:** A searchable knowledge base of common diseases (Malaria, Dengue, Snakebite) featuring bilingual descriptions and images sourced from Wikipedia.
-* **📢 Digital Notice Board:** A dedicated tab for critical health updates (Vaccination drives, Cold wave alerts, Free eye camps), ensuring villagers stay informed about community health events.
+* **📷 Smart Symptom Scanner (Input Layer):** A dedicated tool for patients to log their current condition. Users can describe symptoms in text or upload images (e.g., rashes, wounds). This data is tagged and securely stored in the patient's medical history for analysis.
+* **🤖 AI Doctor (Analysis Layer):** The intelligent consultant that analyzes the data. Unlike simple chatbots, it **automatically retrieves the latest symptom scan** combined with the patient's **previous medical history** to generate a context-aware, holistic diagnosis and first-aid plan.
+* **📝 Medical History & Report Overview:** A centralized dashboard that tracks all previous scans and reports, allowing the AI to detect patterns (e.g., recurring fevers) that a one-time scan might miss.
+* **👨‍⚕️ Digital OPD (Doctor Consultancy):** A dedicated appointment system allowing rural patients to request consultations with human specialists. It supports asynchronous requests, perfect for areas with unstable internet.
+* **📍 Smart Hospital Finder:** Uses the phone's GPS to locate the nearest hospitals. It features a **Hybrid Mode** that fetches live data from OpenStreetMap when online and switches to a hardcoded emergency database when offline.
+* **🗺️ Live Navigation:** One-tap integration with **Google Maps** and **Waze** to guide villagers to the nearest facility via the fastest route.
+* **📢 Digital Notice Board:** Critical health updates (Vaccination drives, Cold wave alerts) for the local community.
 
 ---
 
@@ -38,16 +40,17 @@ Create a solution to overcome this challenge for the helpless people with limite
 * **React.js (Vite):** Fast, modern UI framework.
 * **Tailwind CSS:** For responsive, mobile-first styling.
 * **Lucide React:** Lightweight iconography.
-
+* **Geolocation API:** For real-time user tracking.
 
 **Backend:**
 * **Node.js & Express.js:** RESTful API server.
-* **Multer:** Handling image uploads for the AI scanner.
+* **Multer:** Handling image uploads.
+* **Axios:** Proxying external requests to OpenStreetMap.
 
 **AI & Cloud Services:**
-* **Google Gemini 1.5 Flash:** The core intelligence engine for symptom analysis and medical advice.
+* **Google Gemini 1.5 Flash:** Core intelligence for symptom analysis and medical advice.
 * **Firebase Authentication:** Secure user login and management.
-* **Wikipedia Summary API:** Fetching real-time disease information.
+* **Overpass API (OpenStreetMap):** For fetching live hospital location data.
 
 ---
 
@@ -61,10 +64,28 @@ Create a solution to overcome this challenge for the helpless people with limite
 Our solution is explicitly designed for the "Hill Tracts" scenario where internet is unstable:
 
 1.  **Hybrid Architecture (Online/Offline Mode):**
-    * **Online:** When connectivity is available, the app uses the full power of Gemini 1.5 Flash for deep analysis and fetches live Wikipedia data.
-    * **Offline Fallback:** If the internet fails, the app automatically switches to **Local Mode**. It uses a lightweight, hardcoded medical dataset (`offlineData.ts`) to recognize keywords (e.g., "cut", "snake", "fever") and provide immediate, pre-saved emergency advice without needing a server connection.
+    * **Online:** The app uses Gemini 1.5 Flash for deep analysis and OpenStreetMap for live hospital tracking.
+    * **Offline Fallback:** If the internet fails, the app automatically switches to **Local Mode**. It uses a lightweight, hardcoded medical dataset (`offlineData.ts`) for first aid and a pre-loaded database of major hill tract hospitals for location services.
 2.  **Low Bandwidth Optimization:**
-    * Images sent to the AI are compressed on the client-side using `browser-image-compression` before upload, ensuring requests work even on slow 2G/3G networks.
-3.  **Static Resource Caching:** Crucial data like the "Notice Board" and core "Disease Info" are structured to be cached locally, allowing the app to remain functional during temporary outages.
+    * Images sent to the AI are compressed client-side before upload, ensuring requests work even on slow 2G/3G networks.
+3.  **Static Resource Caching:** Crucial data like the  "nearby hospitals" and "Disease Info" are structured to be cached locally.
 
 ---
+
+### 🚀 How to Run the Project
+
+1.  **Clone the repository.**
+2.  **Setup Backend:**
+    ```bash
+    cd backend
+    npm install
+    # Create a .env file with GEMINI_API_KEY=your_key and FIREBASE_API_KEY=your_key
+    node server.js
+    ```
+3.  **Setup Frontend:**
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
+4.  Open `http://localhost:5173` in your browser.
