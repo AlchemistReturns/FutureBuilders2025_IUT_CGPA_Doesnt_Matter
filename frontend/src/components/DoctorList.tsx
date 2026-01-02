@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, UserPlus, MapPin, Star, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from '../config/api';
 

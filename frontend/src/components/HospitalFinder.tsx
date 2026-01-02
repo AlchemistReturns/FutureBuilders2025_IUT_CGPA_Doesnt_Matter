@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Phone, Navigation, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
+import { MapPin, Navigation, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
 import { API_BASE_URL } from '../config/api';
 
 // 1. OFFLINE BACKUP DATA (Fallback)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 type NoticeType = 'Alert' | 'Update' | 'Info';

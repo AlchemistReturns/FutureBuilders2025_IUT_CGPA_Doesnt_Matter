@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 interface User {
     uid: string;
     email: string | null;
+    name: string | null; // Added name
     role?: 'patient' | 'doctor' | 'admin'; // Added role
 }
 

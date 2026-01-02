@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Users, Calendar, Activity, Settings, LogOut } from "lucide-react";
+import { Users, Calendar, Activity } from "lucide-react";
 import { API_BASE_URL } from '../config/api';
 
 export default function DoctorDashboard() {
@@ -31,7 +31,7 @@ export default function DoctorDashboard() {
         }
     };
 
-    const handleStatusUpdate = async (id: string, status: 'accepted' | 'rejected') => {
+    const handleStatusUpdate = async (id: string, status: 'accepted' | 'rejected' | 'completed') => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/status`, {
                 method: "PUT",
@@ -46,11 +46,6 @@ export default function DoctorDashboard() {
         } catch (error) {
             console.error(`Failed to ${status} appointment`, error);
         }
-    };
-
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
     };
 
     return (

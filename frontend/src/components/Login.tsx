@@ -28,7 +28,7 @@ export default function Login() {
             }
 
             const data = await response.json();
-            login(data.token, { uid: data.userId, email: data.email, role: data.role as any });
+            login(data.token, { uid: data.userId, email: data.email, name: data.name, role: data.role as any });
 
             // Redirect based on role
             if (data.role === 'doctor') {

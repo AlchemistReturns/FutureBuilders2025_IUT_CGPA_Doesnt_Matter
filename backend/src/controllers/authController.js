@@ -38,6 +38,7 @@ const registerUser = async (req, res) => {
             refreshToken: tokenData.refreshToken,
             userId: uid,
             email: email,
+            name: name,
             role: req.body.role || 'patient'
         });
 
@@ -68,6 +69,7 @@ const loginUser = async (req, res) => {
             refreshToken: tokenData.refreshToken,
             userId: tokenData.localId,
             email: email,
+            name: userData ? userData.name : '',
             role: role
         });
     } catch (error) {
