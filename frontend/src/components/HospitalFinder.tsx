@@ -58,14 +58,12 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 
 const HospitalFinder: React.FC = () => {
     const [hospitals, setHospitals] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<string>("Waiting for location...");
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [searchQuery, setSearchQuery] = useState("");
 
     const searchLocation = async () => {
         if (!searchQuery.trim()) return;
-        setLoading(true);
         setStatus("Searching location...");
 
         try {
@@ -96,17 +94,14 @@ const HospitalFinder: React.FC = () => {
             console.error(err);
             setStatus("Search failed.");
         }
-        setLoading(false);
     };
 
     const findHospitals = () => {
-        setLoading(true);
         setStatus("Locating GPS...");
 
         if (!navigator.geolocation) {
             setStatus("GPS not supported. Using offline database.");
             setHospitals(OFFLINE_HOSPITALS);
-            setLoading(false);
             return;
         }
 
@@ -144,7 +139,6 @@ const HospitalFinder: React.FC = () => {
 
                     setHospitals(sortedOffline);
                 }
-                setLoading(false);
             },
             (err) => {
                 console.error("Geolocation Error:", err);
@@ -155,7 +149,6 @@ const HospitalFinder: React.FC = () => {
 
                 setStatus(`${errorMessage}. Showing offline data.`);
                 setHospitals(OFFLINE_HOSPITALS);
-                setLoading(false);
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );

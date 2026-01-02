@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from '../config/api';
 
@@ -13,7 +13,6 @@ interface Disease {
 
 export default function DiseaseHistory() {
     const { currentUser } = useAuth();
-    const navigate = useNavigate();
 
     // Disease History State
     const [diseases, setDiseases] = useState<Disease[]>([]);

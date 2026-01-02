@@ -28,7 +28,6 @@ export default function Dashboard() {
     const [diseases, setDiseases] = useState<Disease[]>([]);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [insight, setInsight] = useState("");
-    const [loading, setLoading] = useState(false);
     const [loadingInsight, setLoadingInsight] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
@@ -72,7 +71,6 @@ export default function Dashboard() {
     const fetchDiseases = async () => {
         if (!currentUser?.uid) return;
         try {
-            setLoading(true);
             const res = await fetch(`${API_BASE_URL}/api/diseases/${currentUser.uid}`);
             if (res.ok) {
                 const data = await res.json();
@@ -81,8 +79,6 @@ export default function Dashboard() {
             }
         } catch (err) {
             console.error("Failed to fetch diseases", err);
-        } finally {
-            setLoading(false);
         }
     };
 

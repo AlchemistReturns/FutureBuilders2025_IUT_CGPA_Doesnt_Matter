@@ -112,19 +112,20 @@ export default function SymptomTracker() {
                             {msg.role === "user" ? (
                                 msg.text
                             ) : (
-                                <ReactMarkdown
-                                    className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4"
-                                    components={{
-                                        p: ({ node, ...props }: any) => <p className="mb-2 last:mb-0" {...props} />,
-                                        ul: ({ node, ...props }: any) => <ul className="list-disc pl-4 mb-2" {...props} />,
-                                        ol: ({ node, ...props }: any) => <ol className="list-decimal pl-4 mb-2" {...props} />,
-                                        li: ({ node, ...props }: any) => <li className="mb-1" {...props} />,
-                                        strong: ({ node, ...props }: any) => <strong className="font-bold" {...props} />,
-                                        a: ({ node, ...props }: any) => <a className="text-emerald-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
-                                    }}
-                                >
-                                    {msg.text}
-                                </ReactMarkdown>
+                                <div className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4">
+                                    <ReactMarkdown
+                                        components={{
+                                            p: ({ node, ...props }: any) => <p className="mb-2 last:mb-0" {...props} />,
+                                            ul: ({ node, ...props }: any) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                                            ol: ({ node, ...props }: any) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                                            li: ({ node, ...props }: any) => <li className="mb-1" {...props} />,
+                                            strong: ({ node, ...props }: any) => <strong className="font-bold" {...props} />,
+                                            a: ({ node, ...props }: any) => <a className="text-emerald-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                                        } as any}
+                                    >
+                                        {msg.text}
+                                    </ReactMarkdown>
+                                </div>
                             )}
                         </div>
 

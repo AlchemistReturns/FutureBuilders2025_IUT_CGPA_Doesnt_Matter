@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Users, Calendar, Activity } from "lucide-react";
 import { API_BASE_URL } from '../config/api';
 
 export default function DoctorDashboard() {
-    const { currentUser, logout } = useAuth();
-    const navigate = useNavigate();
+    const { currentUser } = useAuth();
 
     const [appointments, setAppointments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);

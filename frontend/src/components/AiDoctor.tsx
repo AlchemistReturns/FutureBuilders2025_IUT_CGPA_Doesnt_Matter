@@ -242,20 +242,21 @@ const AiDoctor: React.FC = () => {
                                 {msg.sender === 'user' ? (
                                     <p className="whitespace-pre-wrap">{msg.text}</p>
                                 ) : (
-                                    <ReactMarkdown
-                                        className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4"
-                                        components={{
-                                            // Custom components to ensure styling works within the chat bubble
-                                            p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                                            ul: ({ node, ...props }) => <ul className="list-disc pl-4 mb-2" {...props} />,
-                                            ol: ({ node, ...props }) => <ol className="list-decimal pl-4 mb-2" {...props} />,
-                                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
-                                            strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
-                                            a: ({ node, ...props }) => <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
-                                        }}
-                                    >
-                                        {msg.text}
-                                    </ReactMarkdown>
+                                    <div className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4">
+                                        <ReactMarkdown
+                                            components={{
+                                                // Custom components to ensure styling works within the chat bubble
+                                                p: ({ node, ...props }: any) => <p className="mb-2 last:mb-0" {...props} />,
+                                                ul: ({ node, ...props }: any) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                                                ol: ({ node, ...props }: any) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                                                li: ({ node, ...props }: any) => <li className="mb-1" {...props} />,
+                                                strong: ({ node, ...props }: any) => <strong className="font-bold" {...props} />,
+                                                a: ({ node, ...props }: any) => <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                                            } as any}
+                                        >
+                                            {msg.text}
+                                        </ReactMarkdown>
+                                    </div>
                                 )}
                             </div>
                             {msg.status === 'failed' && (
