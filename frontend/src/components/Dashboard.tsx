@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from '../config/api';
 
 interface Disease {
     id: string;
@@ -43,7 +44,7 @@ export default function Dashboard() {
         if (!currentUser?.uid) return;
         try {
             setLoadingInsight(true);
-            const res = await fetch(`http://localhost:5000/api/ai/insights/${currentUser.uid}`);
+            const res = await fetch(`${API_BASE_URL}/api/ai/insights/${currentUser.uid}`);
             if (res.ok) {
                 const data = await res.json();
                 setInsight(data.insight);
@@ -58,7 +59,7 @@ export default function Dashboard() {
     const fetchAppointments = async () => {
         if (!currentUser?.uid) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/appointments/patient/${currentUser.uid}`);
+            const res = await fetch(`${API_BASE_URL}/api/appointments/patient/${currentUser.uid}`);
             if (res.ok) {
                 const data = await res.json();
                 setAppointments(data.data || []);
@@ -72,7 +73,7 @@ export default function Dashboard() {
         if (!currentUser?.uid) return;
         try {
             setLoading(true);
-            const res = await fetch(`http://localhost:5000/api/diseases/${currentUser.uid}`);
+            const res = await fetch(`${API_BASE_URL}/api/diseases/${currentUser.uid}`);
             if (res.ok) {
                 const data = await res.json();
                 setDiseases(data.diseases);
@@ -95,7 +96,7 @@ export default function Dashboard() {
         if (!currentUser?.uid) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/diseases', {
+            const res = await fetch(`${API_BASE_URL}/api/diseases`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: currentUser.uid, ...formData })
@@ -160,8 +161,8 @@ export default function Dashboard() {
                                         <p className="text-sm text-gray-500">{app.date} at {app.time}</p>
                                     </div>
                                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${app.status === 'accepted' ? 'bg-green-100 text-green-700' :
-                                            app.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                'bg-yellow-100 text-yellow-700'
+                                        app.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                            'bg-yellow-100 text-yellow-700'
                                         }`}>
                                         {app.status.toUpperCase()}
                                     </span>

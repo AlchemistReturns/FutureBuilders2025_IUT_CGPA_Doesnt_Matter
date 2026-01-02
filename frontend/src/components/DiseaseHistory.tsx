@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from '../config/api';
 
 interface Disease {
     id: string;
@@ -31,7 +32,7 @@ export default function DiseaseHistory() {
         if (!currentUser?.uid) return;
         try {
             setLoading(true);
-            const res = await fetch(`http://localhost:5000/api/diseases/${currentUser.uid}`);
+            const res = await fetch(`${API_BASE_URL}/api/diseases/${currentUser.uid}`);
             if (res.ok) {
                 const data = await res.json();
                 setDiseases(data.diseases);
@@ -52,7 +53,7 @@ export default function DiseaseHistory() {
         if (!currentUser?.uid) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/diseases', {
+            const res = await fetch(`${API_BASE_URL}/api/diseases`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: currentUser.uid, ...formData })

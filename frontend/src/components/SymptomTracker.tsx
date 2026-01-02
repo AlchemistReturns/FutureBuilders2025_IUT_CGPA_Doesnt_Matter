@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import ReactMarkdown from 'react-markdown';
+import { API_BASE_URL } from '../config/api';
 
 type Role = "user" | "assistant";
 
@@ -38,7 +40,7 @@ export default function SymptomTracker() {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:5000/api/symptom-tracker", {
+            const res = await fetch(`${API_BASE_URL}/api/symptom-tracker`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,7 +109,23 @@ export default function SymptomTracker() {
                                 : "bg-white text-gray-800 rounded-bl-none border border-gray-100"
                                 }`}
                         >
-                            {msg.text}
+                            {msg.role === "user" ? (
+                                msg.text
+                            ) : (
+                                <ReactMarkdown
+                                    className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4"
+                                    components={{
+                                        p: ({ node, ...props }: any) => <p className="mb-2 last:mb-0" {...props} />,
+                                        ul: ({ node, ...props }: any) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                                        ol: ({ node, ...props }: any) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                                        li: ({ node, ...props }: any) => <li className="mb-1" {...props} />,
+                                        strong: ({ node, ...props }: any) => <strong className="font-bold" {...props} />,
+                                        a: ({ node, ...props }: any) => <a className="text-emerald-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                                    }}
+                                >
+                                    {msg.text}
+                                </ReactMarkdown>
+                            )}
                         </div>
 
                         {msg.role === 'user' && (

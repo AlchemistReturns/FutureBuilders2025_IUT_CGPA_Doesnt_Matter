@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Users, Calendar, Activity, Settings, LogOut } from "lucide-react";
+import { API_BASE_URL } from '../config/api';
 
 export default function DoctorDashboard() {
     const { currentUser, logout } = useAuth();
@@ -18,7 +19,7 @@ export default function DoctorDashboard() {
 
     const fetchAppointments = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/appointments/doctor/${currentUser?.uid}`);
+            const response = await fetch(`${API_BASE_URL}/api/appointments/doctor/${currentUser?.uid}`);
             const data = await response.json();
             if (data.success) {
                 setAppointments(data.data);
@@ -32,7 +33,7 @@ export default function DoctorDashboard() {
 
     const handleStatusUpdate = async (id: string, status: 'accepted' | 'rejected') => {
         try {
-            const response = await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+            const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/status`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status })
@@ -125,7 +126,7 @@ export default function DoctorDashboard() {
                                     </div>
                                 ) : (
                                     <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase ${apt.status === 'completed' ? 'bg-blue-100 text-blue-700' :
-                                            apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                                        apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
                                         }`}>
                                         {apt.status}
                                     </div>

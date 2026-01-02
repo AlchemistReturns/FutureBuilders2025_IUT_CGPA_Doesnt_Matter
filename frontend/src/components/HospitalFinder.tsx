@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, Navigation, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
+import { API_BASE_URL } from '../config/api';
 
 // 1. OFFLINE BACKUP DATA (Fallback)
 const OFFLINE_HOSPITALS = [
@@ -78,7 +79,7 @@ const HospitalFinder: React.FC = () => {
                 setStatus(`Found: ${geoData[0].display_name}`);
 
                 // Fetch hospitals with new coords
-                const response = await fetch(`http://localhost:5000/api/hospitals?lat=${lat}&lon=${lon}`);
+                const response = await fetch(`${API_BASE_URL}/api/hospitals?lat=${lat}&lon=${lon}`);
                 const result = await response.json();
 
                 if (result.success && result.data.length > 0) {
@@ -116,7 +117,7 @@ const HospitalFinder: React.FC = () => {
                 try {
                     // 🟢 CALL YOUR BACKEND HERE
                     // Note: Ensure your backend is running on localhost:5000
-                    const response = await fetch(`http://localhost:5000/api/hospitals?lat=${latitude}&lon=${longitude}`);
+                    const response = await fetch(`${API_BASE_URL}/api/hospitals?lat=${latitude}&lon=${longitude}`);
 
                     if (!response.ok) throw new Error("Backend API Failed");
 

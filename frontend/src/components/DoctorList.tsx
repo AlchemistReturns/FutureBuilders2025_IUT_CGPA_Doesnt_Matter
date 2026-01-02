@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, UserPlus, MapPin, Star, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from '../config/api';
 
 interface Doctor {
     id: string;
@@ -28,7 +29,7 @@ export default function DoctorList() {
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/doctors");
+                const response = await fetch(`${API_BASE_URL}/api/doctors`);
                 const data = await response.json();
                 if (data.success) {
                     setDoctors(data.data);
@@ -62,7 +63,7 @@ export default function DoctorList() {
         console.log("Sending appointment request:", payload);
 
         try {
-            const response = await fetch("http://localhost:5000/api/appointments", {
+            const response = await fetch(`${API_BASE_URL}/api/appointments`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { offlineData } from '../data/offlineData';
 import { Link } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
+import { API_BASE_URL } from '../config/api';
 
 interface Message {
     id?: string;
@@ -72,7 +73,7 @@ const AiDoctor: React.FC = () => {
                 formData.append('userId', currentUser.uid);
                 formData.append('text', msg.text);
 
-                const res = await fetch('http://localhost:5000/api/chat/send', {
+                const res = await fetch(`${API_BASE_URL}/api/chat/send`, {
                     method: 'POST',
                     body: formData
                 });
@@ -98,7 +99,7 @@ const AiDoctor: React.FC = () => {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/chat/history/${currentUser?.uid}`);
+            const res = await fetch(`${API_BASE_URL}/api/chat/history/${currentUser?.uid}`);
             if (res.ok) {
                 const data = await res.json();
                 setMessages(data.messages);
@@ -144,7 +145,7 @@ const AiDoctor: React.FC = () => {
                 formData.append('text', userMsg.text);
                 if (image) formData.append('image', image);
 
-                const res = await fetch('http://localhost:5000/api/chat/send', {
+                const res = await fetch(`${API_BASE_URL}/api/chat/send`, {
                     method: 'POST',
                     body: formData
                 });
