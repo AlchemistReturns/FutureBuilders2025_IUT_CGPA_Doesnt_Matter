@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { db } = require("../config/firebase");
 
@@ -48,7 +47,7 @@ exports.sendMessage = async (req, res) => {
         if (imageFile) {
             parts.push({
                 inlineData: {
-                    data: fs.readFileSync(imageFile.path).toString("base64"),
+                    data: imageFile.buffer.toString("base64"),
                     mimeType: imageFile.mimetype
                 }
             });
@@ -69,9 +68,6 @@ exports.sendMessage = async (req, res) => {
             timestamp: new Date().toISOString()
         };
         await db.collection("users").doc(userId).collection("chats").add(aiMessage);
-
-        // Cleanup
-        if (imageFile) fs.unlinkSync(imageFile.path);
 
         res.json({ response: responseText, message: aiMessage });
 

@@ -10,7 +10,7 @@ const { getNearbyHospitals } = require('./controllers/hospitalController');
 
 const app = express();
 const port = process.env.PORT || 5000;
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
 app.use(express.json());
