@@ -4,7 +4,7 @@ let serviceAccount;
 try {
     if (process.env.FIREBASE_SERVICE_ACCOUNT) {
         // Production / Vercel: Use environment variable
-        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\n/g, "\n"));
         console.log("Using Firebase credentials from environment variable.");
     } else {
         // Local Development: Use file
